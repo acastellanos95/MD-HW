@@ -1,0 +1,38 @@
+
+[ defaults ]
+; nbfunc        comb-rule       gen-pairs       fudgeLJ fudgeQQ
+  1             2               no              1.0     1.0
+
+[ atomtypes ]
+   OW    8      15.99940       0.000       A   0.00000E+00   0.00000E+00
+   H     1       1.00800       0.000       A   0.00000E+00   0.00000E+00
+
+[ nonbond_params ]
+ OW    OW     1 0.31660E+00   0.65015E+00
+ OW    H      1 0.00000E+00   0.00000E+00
+ H     H      1 0.00000E+00   0.00000E+00
+
+[ moleculetype ]
+; molname	nrexcl
+SOL		2
+
+[ atoms ]
+     1     OW      1    SOL     OW      1    -0.8476   15.99940
+     2      H      1    SOL    HW1      1     0.4238    1.00800
+     3      H      1    SOL    HW2      1     0.4238    1.00800
+
+[ settles ]
+; OW	funct	doh	dhh
+1	1	0.10000 0.1633    
+
+[ exclusions ]
+1	2	3
+2	1	3
+3	1	2
+
+[ System]
+
+SPCE  
+
+[ Molecules ]
+SOL               500

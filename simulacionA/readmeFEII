@@ -1,0 +1,221 @@
+          PRACTICA
+---------------------------------
+DINAMICA MOLECULAR DE AGUA
+       24 julio 2019
+    Minerva Gonzalez Melchor
+---------------------------------
+
+A. Estando en el centro de computo ingresar con su cuenta y contraseña 
+   a WS21, WS22 o WS23
+
+B. Abrir una terminal e inicializar variables necesarias para ejecutar el programa de DM
+   ( $ es el simbolo de la linea de comandos en la terminal )
+
+$ source /usr/local/bin/GMXRC.bash
+
+---------------------------------------------------------------------------------
+EJERCICIO: Realizar una simulacion molecular de agua a 298 K y 1 bar de
+presion y determinar 
+a) la densidad promedio
+b) la funcion de distribucion radial entre los pares H-H, H-O y O-O 
+---------------------------------------------------------------------------------
+
+PASO 0. Usaremos el modelo SPC/E del agua. Mas detalles del modelo en articulo
+H2O_SPCE_Berendsen_1987.pdf anexo, en archivo MGMaguaSPCE.pdf y figura spce.eps
+J. Phys. Chem, 1987, vol.91. pag. 6269
+
+Para ver el articulo
+$ xpdf H2O_SPCE_Berendsen_1987.pdf  
+
+Para ver el archivo 
+$ xpdf MGMaguaSPCE.pdf
+
+Para ver la figura spce.eps
+$ ghostview spce.eps
+
+Cuantas cargas tiene el modelo?
+
+Cual es la geometria de la molecula?
+
+PASO 1. Visualizar la configuracion inicial y distinguir los atomos de H y O
+
+$ vmd gromacs.gro
+
+al ejecutar el comando anterior, aparecen dos pantallas 
+- VMD main
+- VDMD 1.9.2 OpenGL Display
+
+en VMD Main seleccionar Graphics --> Representations 
+En la nueva ventana Graphical Representations, abajo a la izquierda en 
+Drawing Method, dar click en la flecha y seleccionar CPK
+con lo cual visualizamos a las moleculas de agua.
+
+Cuantas moleculas hay en la configuracion inicial?
+
+500 moleculas de agua
+
+Sugerencia: revisar el numero de atomos en VMD Main.
+
+Para cerrar VMD ir a VMD Main --> File --> Quit
+
+PASO 2. Revisar que tenemos los archivos de entrada 
+
+file.top 
+file.gro
+file.mdp
+
+PASO 3. Editar el archivo file.mdp
+El archivo file.mdp tiene muchas lineas, cada una representa el valor de 
+una variable o una instruccion especifica. Solo hay que revisar 
+las lineas donde aparecen las variables que a continuacion se especifican 
+y verificar que tengan los valores que a continuacion se indican,
+
+La edicion se puede hacer con un editor de texto como gedit o vi
+
+$ gedit file.mdp
+
+una vez que se edito el archivo hay que salvarlo y guardarlo. Los valores
+que hay que checar en el archivo mdp son
+
+
+integrator               = md
+dt                       = 0.002
+nsteps                   = 20000
+nstxout                  = 50
+nstvout                  = 50
+nstlog                   = 50
+nstenergy                = 50
+pbc                      = xyz
+rlist                    = 1.0
+coulombtype              = PME
+rcoulomb                 = 1.0
+vdw-type                 = Cut-off
+rvdw                     = 1.0
+DispCorr                 = EnerPres
+Tcoupl                   = berendsen
+tau_t                    = 0.2
+ref_t                    = 298.15
+Pcoupl                   = berendsen
+tau_p                    = 1.0
+ref_p                    = 1.0
+gen_vel                  = yes
+constraints              = allangles
+constraint-algorithm     = Lincs
+
+PASO 4. Correr Gromacs por 20,000 configuraciones
+
+grompp -f file.mdp -c file.gro -p file.top -o file.tpr
+./make
+nohup mdrun -v -deffnm file &
+
+Las variables que usa el programa se activan en la terminal 
+donde se ejecuten las anteriores instrucciones usando 
+
+$ source /usr/local/bin/GMXRC.bash
+
+Para ver que el programa esta corriendo 
+
+$ top
+Ctrl C para salir
+
+Para ver que el proceso termino correctamente dar
+
+$ tail -200 file.log
+
+Debemos obtener informacion similar a 
+
+       Time:       67.320       67.666       99.5
+      (ns/day)    (hour/ns)
+Performance:       51.077        0.470
+Finished mdrun on node 0 Mon Oct 29 22:44:21 2018
+
+PASO 5. Hacer y ver la pelicula
+
+./make_movie
+
+PASO 6. Analisis de resultados
+
+a) Obtener densidad del agua
+
+En la terminal ejecutar el comando 
+
+$ g_energy -f file.edr -o densidad.xvg 
+
+Se desplega un menu similar a:
+
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  LJ-(SR)          2  Disper.-corr.    3  Coulomb-(SR)     4  Coul.-recip.  
+  5  Potential        6  Kinetic-En.      7  Total-Energy     8  Temperature   
+  9  Pres.-DC        10  Pressure        11  Box-X           12  Box-Y         
+ 13  Box-Z           14  Volume          15  Density         16  pV            
+ 17  Enthalpy        18  Vir-XX          19  Vir-XY          20  Vir-XZ        
+ 21  Vir-YX          22  Vir-YY          23  Vir-YZ          24  Vir-ZX        
+ 25  Vir-ZY          26  Vir-ZZ          27  Pres-XX         28  Pres-XY       
+ 29  Pres-XZ         30  Pres-YX         31  Pres-YY         32  Pres-YZ       
+ 33  Pres-ZX         34  Pres-ZY         35  Pres-ZZ         36  #Surf*SurfTen 
+ 37  T-System        38  Lamb-System
+
+Teclear el numero que identifica a "Density" y dar enter
+15
+enter 
+
+En pantalla se muestra la densidad promedio
+
+Cual es el valor calculado?
+
+Graficar la densidad en funcion del tiempo
+
+$ xmgrace densidad.xvg
+
+El valor experimental es 0.997 g/ml a las condiciones especificadas. 
+Cual es el error relativo?
+error = (rho_Exp-rho_DM)*100/rho_exp
+
+b) Obtener la función de distribucion entre los pares H-H, H-O y O-O
+
+Crear la lista de indices de los atomos usando la siguiente opcion
+
+$ make_ndx -f file.gro -o index.ndx
+
+Hay que elegir a de atom y dar el nombre del atomo, como enseguida
+
+> a OW
+  enter
+> a HW1
+  enter
+> a HW2
+  enter
+> quit
+
+En este PASO se crea el archivo index.ndx
+
+Para calcular las funciones de distribucion radial
+ejecutamos el script gr
+
+$ ./gr
+
+El eje X es distancia y esta en Angstroms.
+
+De las tres figuras, identificar las funciones para H-H, O-H y O-O.
+
+La linea roja es la experimental y la negra es la de dinamica molecular
+
+El primer pico corresponde a la distancia intramolecular en la molecula.
+
+Localizar los dos primeros maximos en la funcion de distribucion radial O-O
+
+A que distancia se localiza el primer minimo?
+
+A que distancias se encuentran los oxigenos en dos moleculas distintas?
+Cual es la distancia O-H y H-H?
+
+Como se comparan los resultados de dinamica molecular con los experimentales
+para los pares O-O, H-O e H-H?. Describir las diferencias.
+
+Los datos experimentales que se grafican estan en los archivos 
+
+groo-exp.dat
+groh-exp.dat  
+grhh-exp.dat  
+-------------------------------------

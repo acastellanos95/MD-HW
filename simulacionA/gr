@@ -1,0 +1,28 @@
+echo "3 3" > xx.dat
+g_rdf -f file.trr -n index.ndx < xx.dat
+mv rdf.xvg grOO
+echo "grOO" > name
+./rwgr < name
+mv fort.8 grOO.dat
+rm grOO
+
+echo "3 4" > xx.dat
+g_rdf -f file.trr -n index.ndx < xx.dat
+mv rdf.xvg grOH
+echo "grOH" > name
+./rwgr < name
+mv fort.8 grOH.dat
+rm grOH
+
+echo "4 4" > xx.dat
+g_rdf -f file.trr -n index.ndx < xx.dat
+mv rdf.xvg grHH
+echo "grHH" > name
+./rwgr < name
+mv fort.8 grHH.dat
+rm name
+
+xmgrace grOO.dat groo-exp.dat&
+xmgrace grOH.dat groh-exp.dat&
+xmgrace grHH.dat grhh-exp.dat&
+
