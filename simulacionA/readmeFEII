@@ -35,7 +35,11 @@ $ ghostview spce.eps
 
 Cuantas cargas tiene el modelo?
 
+3 cargas
+
 Cual es la geometria de la molecula?
+
+1 A de distancia de OH y 109.47 deg de apertura en HOH
 
 PASO 1. Visualizar la configuracion inicial y distinguir los atomos de H y O
 
@@ -163,6 +167,12 @@ enter
 En pantalla se muestra la densidad promedio
 
 Cual es el valor calculado?
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Density                     997.102        2.9    9.39423   -2.49253  (kg/m^3)
+
+
 
 Graficar la densidad en funcion del tiempo
 

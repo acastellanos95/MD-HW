@@ -2,14 +2,14 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: andre (1000)
 ;	On host: pop-os
-;	At date: Mon Jul 29 19:39:10 2019
+;	At date: Thu Aug  1 12:45:52 2019
 ;
 ;	Created by:
 ;	                     :-) GROMACS - gmx grompp, 2019.3 (-:
 ;	
 ;	Executable:   /usr/local/gromacs/bin/gmx
 ;	Data prefix:  /usr/local/gromacs
-;	Working dir:  /media/andre/Andre/simulacionA
+;	Working dir:  /home/andre/Documents/Verano de la Investigacion Cientifica/Ejercicios/MD-HW/simulacionA
 ;	Command line:
 ;	  gmx grompp -f file.mdp -c file.gro -p file.top -o file.tpr
 
