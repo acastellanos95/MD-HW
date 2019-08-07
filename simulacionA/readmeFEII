@@ -45,7 +45,7 @@ PASO 1. Visualizar la configuracion inicial y distinguir los atomos de H y O
 
 $ vmd gromacs.gro
 
-al ejecutar el comando anterior, aparecen dos pantallas 
+al ejecutar el comando anterior, aparecen dos pan.-allas 
 - VMD main
 - VDMD 1.9.2 OpenGL Display
 
