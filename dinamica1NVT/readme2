@@ -1,0 +1,123 @@
+
+--------------------------------------------------------
+          NANOTUBO DE CARBONO EN AGUA
+           (6,5) SWCNT
+--------------------------------------------------------
+   Nanotubo: 364 atomos 
+El sistema es de 364 atomos = SWCNT
+               50865 atomos = agua spce = 16955 moleculas H20
+               51229  atomos = total de atomos en el sistema
+               16956 moleculas = 1 nanotubo + 16955 aguas
+   
+1. Iniciar variables
+source /usr/local/bin/GMXRC.bash
+
+Verificar que tenemos los archivos top, gro y mdp 
+en el directorio dinamica1NVT
+
+archivo gro: celda cubica de lado Lx=8.0 nm
+
+Para visualizar archivo gro con vmd
+
+vmd min.gro
+
+2. Realizar dinamica molecular con los siguientes parametros.
+En el archivo nvt.mdp verificar que estan asignados los valores
+
+Dinamica NVT a T=298.15, V=8 nm, N esta arriba
+
+dt = 0.002 ! verificar que corre o en caso contrario dejar dt=0.001
+nsteps = 1000000 
+nstlog = 500
+nstenergy = 500
+nstxtcout = 500
+rlist = 1.2
+rcoulomb = 1.2
+rvdw = 1.2
+DispCorr = EnerPres
+Tcoupl = berendsen
+ref_t = 298.15
+tau_t = 0.2
+
+3. Compilar y correr gromacs (EQUILIBRIO)
+grompp -f nvt.mdp -c min.gro -p file.top -o nvt1.tpr
+
+mdrun -v -deffnm nvt1 &
+
+para ver que esta corriendo verificar que el proceso mdrun esta 
+en ejecucion
+
+top 
+
+para ver cuantos pasos de simulacion lleva
+
+tail -200 nvt1.log
+
+Los archivos de salida tienen como nombre nvt y su extension
+en particular, nvt.gro contendra la configuracion final de 
+esta simulacion.
+
+4. En otro directorio continuar la dinamica NVT por 10 millones adicionales,
+para ello crear el directorio dinamica2NVT (PRODUCCION)
+
+mkdir dinamica2NVT
+
+en este directorio se deben copiar los 3 archivos de dinamica1NVT
+
+nvt1.gro
+file.top
+nvt.mdp 
+
+Notar que nvt.gro es el archivo de configuracion de salida de la 
+primera parte de EQUILIBRIO. El archivo nvt.mdp es el mismo
+que se tenia en la primera dinamica pero se debe modificar el 
+numero de pasos de simulacion a 10 millones
+
+nsteps = 10000000  !si es mucho tiempo de maquina bajar a 5 millones
+ 
+5. Compilar y correr gromacs
+grompp -f nvt.mdp -c nvt1.gro -p file.top -o nvt2.tpr
+
+mdrun -v -deffnm nvt2
+
+Los archivos de salida tienen como nombre nvt2 y su extension,
+en particular, nvt2.gro contendra la configuracion final de 
+esta simulacion.
+
+6. Para ver una animacion
+
+trjconv -s nvt.gro -f nvt2.xtc -o movie.gro
+
+vmd movie.gro
+
+7. Calcular temperatura, presion, constante dielectrica
+
+g_energy -f nvt2.edr -o temperaturaNVT.xvg
+g_energy -f nvt2.edr -o presionNVT.xvg
+g_dipoles -s nvt2.tpr  -f nvt2.xtc -temp 298.15 -eps epsilonNVT.xvg
+
+8. Crear la lista de indices
+make_ndx -f nvt2.tpr -o index.ndx
+
+1 & a C*
+2 & a O*
+
+Las dos siguientes lineas solo son ilustrativas de lo que puede resultar 
+como salida 
+
+Select a reference group and 1 group
+Group     0 (         System) has 12396 elements
+Group     1 (          Other) has   360 elements
+
+9. Calcular funciones g(r) interactuando con la pantalla
+
+g_rdf -f nvt2.xtc -n index.ndx -s nvt2.tpr
+
+elegir dos tipos de atomos 
+mover archivo rdf.xvg a uno que denote el par de atomos que 
+se eligio para su calculo.
+
+
+10. Analizar propiedades
+
+En todos los casos guardar graficas 

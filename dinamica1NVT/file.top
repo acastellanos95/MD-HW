@@ -1,0 +1,10 @@
+#include "gromos54a7_atb.ff/forcefield.itp"
+#include "carga4G1M_GROMACS_G54A7FF_allatom.itp"
+#include "gromos54a7_atb.ff/spce.itp"
+
+[ system ]
+organic molecules in water
+
+[ molecules ]
+4G1M                 1
+SOL             16955
