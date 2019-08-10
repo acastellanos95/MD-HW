@@ -1,9 +1,17 @@
 ;
 ;	File 'mdout.mdp' was generated
-;	By user: andreca (151)
-;	On host: WS21
-;	At date: Fri Aug  9 13:05:40 2019
+;	By user: andre (1000)
+;	On host: pop-os
+;	At date: Fri Aug  9 20:45:14 2019
 ;
+;	Created by:
+;	                     :-) GROMACS - gmx grompp, 2019.3 (-:
+;	
+;	Executable:   /usr/local/gromacs/bin/gmx
+;	Data prefix:  /usr/local/gromacs
+;	Working dir:  /home/andre/Documents/Verano de la Investigacion Cientifica/Ejercicios/MD-HW/dinamica1NVT
+;	Command line:
+;	  gmx grompp -maxwarn 1 -f nvt.mdp -c min.gro -p file.top -o nvt1.tpr
 
 ; VARIOUS PREPROCESSING OPTIONS
 ; Preprocessor information: use cpp syntax.
@@ -59,17 +67,18 @@ nstlog                   = 500
 nstcalcenergy            = 100
 nstenergy                = 500
 ; Output frequency and precision for .xtc file
-nstxtcout                = 500
-xtc-precision            = 1000
-; This selects the subset of atoms for the .xtc file. You can
-; select multiple groups. By default all atoms will be written.
-xtc-grps                 = 
+nstxout-compressed       = 500
+compressed-x-precision   = 1000
+; This selects the subset of atoms for the compressed
+; trajectory file. You can select multiple groups. By
+; default, all atoms will be written.
+compressed-x-grps        = 
 ; Selection of energy groups
 energygrps               = 
 
 ; NEIGHBORSEARCHING PARAMETERS
-; cut-off scheme (group: using charge groups, Verlet: particle based cut-offs)
-cutoff-scheme            = Group
+; cut-off scheme (Verlet: particle based cut-offs, group: using charge groups)
+cutoff-scheme            = Verlet
 ; nblist update frequency
 nstlist                  = 5
 ; ns algorithm (simple or grid)
@@ -77,14 +86,12 @@ ns_type                  = grid
 ; Periodic boundary conditions: xyz, no, xy
 pbc                      = xyz
 periodic-molecules       = no
-; Allowed energy drift due to the Verlet buffer in kJ/mol/ps per atom,
+; Allowed energy error due to the Verlet buffer in kJ/mol/ps per atom,
 ; a value of -1 means: use rlist
-verlet-buffer-drift      = 0.005
+verlet-buffer-tolerance  = 0.005
 ; nblist cut-off        
 rlist                    = 1.2
 ; long-range cut-off for switched potentials
-rlistlong                = -1
-nstcalclr                = -1
 
 ; OPTIONS FOR ELECTROSTATICS AND VDW
 ; Method for doing electrostatics
@@ -116,34 +123,11 @@ fourier_nz               = 0
 ; EWALD/PME/PPPM parameters
 pme_order                = 4
 ewald_rtol               = 1e-06
+ewald-rtol-lj            = 0.001
+lj-pme-comb-rule         = Geometric
 ewald_geometry           = 3d
 epsilon_surface          = 0
-optimize_fft             = no
-
-; IMPLICIT SOLVENT ALGORITHM
 implicit_solvent         = No
-
-; GENERALIZED BORN ELECTROSTATICS
-; Algorithm for calculating Born radii
-gb_algorithm             = Still
-; Frequency of calculating the Born radii inside rlist
-nstgbradii               = 1
-; Cutoff for Born radii calculation; the contribution from atoms
-; between rlist and rgbradii is updated every nstlist steps
-rgbradii                 = 2
-; Dielectric coefficient of the implicit solvent
-gb-epsilon-solvent       = 80
-; Salt concentration in M for Generalized Born models
-gb_saltconc              = 0
-; Scaling factors used in the OBC GB model. Default values are OBC(II)
-gb-obc-alpha             = 1
-gb-obc-beta              = 0.8
-gb-obc-gamma             = 4.85
-gb-dielectric-offset     = 0.009
-sa-algorithm             = Ace-approximation
-; Surface tension (kJ/mol/nm^2) for the SA (nonpolar surface) part of GBSA
-; The value -1 will set default value for Still/HCT/OBC GB-models.
-sa-surface-tension       = -1
 
 ; OPTIONS FOR WEAK COUPLING ALGORITHMS
 ; Temperature coupling  
@@ -191,9 +175,6 @@ SAoff                    =
 SAsteps                  = 
 ; Scale factor for MM charges
 MMChargeScaleFactor      = 1
-; Optimization of QM subsystem
-bOPT                     = 
-bTS                      = 
 
 ; SIMULATED ANNEALING  
 ; Type of annealing for each temperature group (no/single/periodic)
@@ -246,12 +227,17 @@ wall-density             =
 wall-ewald-zfac          = 3
 
 ; COM PULLING          
-; Pull type: no, umbrella, constraint or constant-force
 pull                     = no
+
+; AWH biasing          
+awh                      = no
 
 ; ENFORCED ROTATION    
 ; Enforced rotation: No or Yes
 rotation                 = no
+
+; Group to display and/or manipulate in interactive MD session
+IMD-group                = 
 
 ; NMR refinement stuff 
 ; Distance restraints type: No, Simple or Ensemble
@@ -317,17 +303,9 @@ simulated-tempering-scaling = geometric
 sim-temp-low             = 300
 sim-temp-high            = 300
 
-; Electric fields      
-; Format is number of terms (int) and for all terms an amplitude (real)
-; and a phase angle (real)
-E-x                      = 
-E-xt                     = 
-E-y                      = 
-E-yt                     = 
-E-z                      = 
-E-zt                     = 
-
-; AdResS parameters    
+; Ion/water position swapping for computational electrophysiology setups
+; Swap positions along direction: no, X, Y, Z
+swapcoords               = no
 adress                   = no
 
 ; User defined thingies
@@ -341,3 +319,11 @@ userreal1                = 0
 userreal2                = 0
 userreal3                = 0
 userreal4                = 0
+; Electric fields
+; Format for electric-field-x, etc. is: four real variables:
+; amplitude (V/nm), frequency omega (1/ps), time for the pulse peak (ps),
+; and sigma (ps) width of the pulse. Omega = 0 means static field,
+; sigma = 0 means no pulse, leaving the field to be a cosine function.
+electric-field-x         = 0 0 0 0
+electric-field-y         = 0 0 0 0
+electric-field-z         = 0 0 0 0
